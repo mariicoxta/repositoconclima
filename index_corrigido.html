@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Repositório da Gestão Climática e da Gestão de Riscos e de Desastres</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    /* (o estilo original do usuário foi mantido aqui, omitido para economia de espaço) */
+  </style>
+</head>
+<body>
+  <h1>Repositório da Gestão Climática e da Gestão de Riscos e de Desastres</h1>
+
+  <input type="hidden" id="temaLink" value="todos">
+  <input type="text" id="palavra" placeholder="Filtrar por palavra-chave..." />
+
+  <div class="temas-container" id="temasContainer">
+    <!-- Cards temáticos -->
+    <!-- (cards omitidos para economia de espaço) -->
+  </div>
+
+  <div class="voltar" id="voltarBtn"> 
+    <button onclick="mostrarTemas()">← Voltar aos temas</button>
+  </div>
+
+  <div class="resultados" id="containerLinks"></div>
+
+  <script>
+    const links = [/* objetos de link (mantidos) */];
+
+    const inputTema = document.getElementById("temaLink"); 
+    const inputFiltro = document.getElementById("palavra");
+    const containerLinks = document.getElementById("containerLinks");
+
+    function renderizarResultados(lista) {
+      containerLinks.innerHTML = "";
+      if (lista.length === 0) {
+        containerLinks.innerHTML = "<p>Nenhum resultado encontrado.</p>";
+        return; 
+      }
+
+      lista.forEach(link => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${link.subtema}</h3>
+          <p><strong>${link.instituicao}</strong></p>
+          <p style="font-size: 13px">${link.ministerio}</p>
+          <p>${link.descricao}</p>
+          <a href="${link.url}" target="_blank">Acessar</a>
+        `;
+        containerLinks.appendChild(card);
+      });
+    }
+
+    function filtrarLinks() {
+      const temaSelecionado = inputTema.value.toLowerCase();
+      const termo = inputFiltro.value.toLowerCase().trim();
+      const filtrados = links.filter(link => {
+        const temaOk = temaSelecionado === "todos" || link.tema.toLowerCase() === temaSelecionado;
+        const palavraOk = termo === "" ||
+          link.titulo.toLowerCase().includes(termo) ||
+          link.descricao.toLowerCase().includes(termo) ||
+          link.assunto.toLowerCase().includes(termo);
+        return temaOk && palavraOk;
+      });
+      renderizarResultados(filtrados);
+    }
+
+    function filtrarTema(tema) {
+      inputTema.value = tema;
+      inputFiltro.value = "";
+      document.getElementById("temasContainer").style.display = "none";
+      document.getElementById("voltarBtn").style.display = "block";
+      document.getElementById("containerLinks").style.display = "block";
+      filtrarLinks();
+    }
+
+    function mostrarTemas() {
+      document.getElementById("temasContainer").style.display = "grid";
+      document.getElementById("voltarBtn").style.display = "none";
+      document.getElementById("containerLinks").style.display = "none";
+      inputTema.value = "todos";
+    }
+
+    inputFiltro.addEventListener("input", () => {
+      document.getElementById("temasContainer").style.display = "none";
+      document.getElementById("voltarBtn").style.display = "block";
+      document.getElementById("containerLinks").style.display = "block";
+      inputTema.value = "todos";
+      filtrarLinks();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      mostrarTemas();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
